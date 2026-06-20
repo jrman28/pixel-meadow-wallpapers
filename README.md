@@ -35,7 +35,7 @@ Set `CROSSFADE_SECONDS` to tune the transition without editing the script:
 CROSSFADE_SECONDS=2 ./scripts/convert_ai_wallpaper.sh input.mp4 output.mp4
 ```
 
-Planned refinement: the installed night wallpaper currently uses a 1.5-second crossfade. Test a slightly softer 2-second transition before the next replacement, while keeping the current version active as the accepted baseline.
+Planned refinement: the installed night wallpaper currently uses a 1.5-second crossfade and still has a slight rough tick when the loop restarts. Test a slightly softer 2-second transition and inspect the boundary frame timing before the next replacement, while keeping the current version active as the accepted baseline.
 
 ## Use on macOS
 
