@@ -21,12 +21,21 @@ The converter applies the approved delivery recipe:
 
 - centered 16:10 crop;
 - half-speed playback with source frames preserved;
+- a 1.5-second end-to-start crossfade for a softer seamless loop;
 - 2560×1600 at 24 fps;
 - silent HEVC Main10 with the macOS-compatible `hvc1` tag;
 - nearest-neighbor scaling for pixel-art edges;
 - CRF 18 with fast-start metadata.
 
 The output intentionally contains no audio stream. Generated videos live outside Git or under the ignored `out/` directory.
+
+Set `CROSSFADE_SECONDS` to tune the transition without editing the script:
+
+```bash
+CROSSFADE_SECONDS=2 ./scripts/convert_ai_wallpaper.sh input.mp4 output.mp4
+```
+
+Planned refinement: the installed night wallpaper currently uses a 1.5-second crossfade. Test a slightly softer 2-second transition before the next replacement, while keeping the current version active as the accepted baseline.
 
 ## Use on macOS
 
