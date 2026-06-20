@@ -1,57 +1,52 @@
 # Pixel Meadow Wallpapers
 
-Two seamless, silent pixel-art video wallpapers built with Remotion and a deterministic WebGL motion system.
+A reproducible workflow for converting AI-animated pixel-art scenes into quiet, silent macOS video wallpapers.
 
-## Compositions
+## Current status
 
-- `PixelMeadow-Day` — localized cloud drift and a rooted foreground breeze
-- `PixelMeadow-Night` — the same motion system plus restrained star twinkle and moon glow
+- **Night:** finished and installed locally as a 2560×1600, 24 fps, 20-second HEVC Main10 wallpaper.
+- **Day:** source artwork only. The failed experimental day renders were removed; the image will be animated with the same AI-to-FFmpeg workflow later.
 
-Both compositions render at 2560×1600, 30 fps, and loop every 24 seconds.
+The original day and night artwork remains under `public/wallpapers/*/source.png`. The Remotion code in `src/` is retained as an experimental motion prototype, but it is not the source of the delivered night wallpaper.
 
-## Development
+## Convert an AI animation
+
+Requirements: FFmpeg with `libx265` and FFprobe.
+
+```bash
+./scripts/convert_ai_wallpaper.sh input.mp4 output.mp4
+```
+
+The converter applies the approved delivery recipe:
+
+- centered 16:10 crop;
+- half-speed playback with source frames preserved;
+- 2560×1600 at 24 fps;
+- silent HEVC Main10 with the macOS-compatible `hvc1` tag;
+- nearest-neighbor scaling for pixel-art edges;
+- CRF 18 with fast-start metadata.
+
+The output intentionally contains no audio stream. Generated videos live outside Git or under the ignored `out/` directory.
+
+## Use on macOS
+
+[Aerial 4](https://aerialscreensaver.github.io/) is the recommended player. Copy the finished MP4 into:
+
+```text
+/Users/Shared/Aerial/My Videos/
+```
+
+Then open Aerial’s menu-bar interface, filter to **My Videos**, choose the wallpaper, and enable **Wallpaper** mode. Aerial can auto-pause when the desktop is covered to reduce battery and GPU use.
+
+For the intended motion, set Aerial's global playback speed to **1.0×**. The video is already slowed by FFmpeg, so applying Aerial's default `0.125×` speed makes it eight times too slow. Disable **Pause when wallpaper is hidden** if the animation should keep running continuously behind application windows.
+
+## Development checks
+
+The earlier Remotion prototype remains available for reference:
 
 ```bash
 npm install
-npm run prepare:assets
-npm test
-npm run lint
-npm run dev
-```
-
-The original PNGs remain immutable under `public/wallpapers/*/source.png`. The preparation script extends them to 16:10 using sampled sky texture, preserves every original pixel at a fixed offset, and writes derived `plate.png` files.
-
-## Rendering
-
-```bash
-npm run render:posters
-npm run render:masters
-npm run encode
-```
-
-Outputs are written to `out/`:
-
-- `masters/` — ProRes 422 HQ masters
-- `delivery/*-hevc.mp4` — silent HEVC Main10 with `hvc1` compatibility
-- `delivery/*-h264.mp4` — silent H.264 fallbacks
-- `posters/` — static day and night posters
-
-Import the HEVC files into a macOS video-wallpaper utility such as Vidwall. Use H.264 only if the player does not accept Main10 HEVC.
-
-## Motion design
-
-- The intact plate is sampled through one WebGL shader; no clouds are extracted or inpainted.
-- Soft elliptical UV influence fields move clouds by approximately 6–18 output pixels without holes or rectangular patches.
-- Grass roots remain fixed while two spatial wind waves move the foreground tips with 6- and 12-second periods.
-- Nearest-neighbor sampling, disabled mipmaps, and integer-pixel displacement preserve pixel-art edges.
-- Every animation is derived from the Remotion frame number and repeats exactly every 720 frames.
-
-## Verification
-
-```bash
 npm test
 npm run lint
 npm run build
 ```
-
-The motion tests cover exact loop periodicity, rooted grass influence, cloud depth and bounds, localized cloud falloff, and restrained night luminance.
