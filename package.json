@@ -28,6 +28,7 @@
     "build": "remotion bundle",
     "prepare:assets": "python3 scripts/prepare_assets.py",
     "test": "node --import tsx --test src/__tests__/*.test.ts",
+    "test:pipeline": "python3 -m unittest discover -s scripts/tests -p 'test_*.py'",
     "render:posters": "mkdir -p out/posters && remotion still PixelMeadow-Day out/posters/day.png --frame=180 && remotion still PixelMeadow-Night out/posters/night.png --frame=180",
     "render:masters": "mkdir -p out/masters && remotion render PixelMeadow-Day out/masters/pixel-meadow-day.mov --codec=prores --prores-profile=hq && remotion render PixelMeadow-Night out/masters/pixel-meadow-night.mov --codec=prores --prores-profile=hq",
     "encode": "bash scripts/encode.sh",
