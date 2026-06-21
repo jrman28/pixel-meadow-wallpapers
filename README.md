@@ -1,54 +1,99 @@
-# Remotion video
+# Pixel Meadow Wallpapers
 
-<p align="center">
-  <a href="https://github.com/remotion-dev/logo">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-dark.apng">
-      <img alt="Animated Remotion Logo" src="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-light.gif">
-    </picture>
-  </a>
-</p>
+A reproducible workflow for converting AI-animated pixel-art scenes into quiet, silent macOS video wallpapers.
 
-Welcome to your Remotion project!
+## Current status
 
-## Commands
+- **Night:** delivered as an 18.5-second, 444-frame HEVC Main10 loop at the approved motion speed.
+- **Day:** delivered from the approved 10-second generation with the same
+  18.5-second, 444-frame specification as night.
+- **Automation:** A lightweight solar scheduler keeps one video active in Aerial
+  and switches at Huntsville sunrise/sunset.
 
-**Install Dependencies**
+The original day and night artwork remains under `public/wallpapers/*/source.png`. The Remotion code in `src/` is retained as an experimental motion prototype, but it is not the source of the delivered night wallpaper.
 
-```console
-npm i
+## Convert an AI animation
+
+Requirements: FFmpeg with `libx265` and FFprobe.
+
+```bash
+python3 scripts/refine_ai_wallpaper.py input.mp4 output.mp4
 ```
 
-**Start Preview**
+The converter applies the approved delivery recipe:
 
-```console
-npm run dev
+- centered 16:10 crop;
+- configurable slowdown (default: 2× duration / half-speed motion);
+- a 1.5-second end-to-start crossfade for a softer seamless loop;
+- 2560×1600 at 24 fps;
+- silent HEVC Main10 with the macOS-compatible `hvc1` tag;
+- nearest-neighbor scaling for pixel-art edges;
+- CRF 18 with fast-start metadata.
+
+The output intentionally contains no audio stream. Generated videos live outside Git or under the ignored `out/` directory.
+
+Preview quickly before a production encode:
+
+```bash
+python3 scripts/refine_ai_wallpaper.py input.mp4 preview.mp4 --mode preview
 ```
 
-**Render video**
+The original converter path remains a backward-compatible wrapper. Use `--dry-run`
+to inspect duration, frame, crop, and filter calculations without encoding.
 
-```console
-npx remotion render
+Analyze any candidate independently:
+
+```bash
+python3 scripts/analyze_loop.py output.mp4 --require-seam
 ```
 
-**Upgrade Remotion**
+See [the refinement runbook](docs/WALLPAPER_REFINEMENT.md) for source preflight,
+three-loop review, production validation, Aerial installation, and rollback.
 
-```console
-npx remotion upgrade
+## Use on macOS
+
+[Aerial 4](https://aerialscreensaver.github.io/) is the recommended player. Copy the finished MP4 into:
+
+```text
+/Users/Shared/Aerial/My Videos/
 ```
 
-## Docs
+Then open Aerial’s menu-bar interface, filter to **My Videos**, choose the wallpaper, and enable **Wallpaper** mode.
 
-Get started with Remotion by reading the [fundamentals page](https://www.remotion.dev/docs/the-fundamentals).
+For the intended motion, set Aerial's global playback speed to **1.0×**. The video is already slowed by FFmpeg, so applying Aerial's default `0.125×` speed makes it eight times too slow. Disable **Pause when wallpaper is hidden** if the animation should keep running continuously behind application windows.
 
-## Help
+Do not leave day and night together in Aerial's active **My Videos** folder.
+Aerial treats two files as a rotating playlist and reloads its player at every
+18.5-second boundary, producing a black flash. See
+[Automatic day/night switching](docs/WALLPAPER_REFINEMENT.md#automatic-daynight-switching)
+for the single-active-file scheduler.
 
-We provide help on our [Discord server](https://discord.gg/6VzzNDwUwV).
+## Development checks
 
-## Issues
+The earlier Remotion prototype remains available for reference:
 
-Found an issue with Remotion? [File an issue here](https://github.com/remotion-dev/remotion/issues/new).
+```bash
+npm install
+npm test
+npm run test:pipeline
+npm run lint
+npm run build
+```
 
-## License
+## Retail package
 
-Note that for some entities a company license is needed. [Read the terms here](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md).
+The Etsy-ready product uses Aerial as the playback engine and a portable zsh
+scheduler to keep one wallpaper active at a time. Aerial's native time filter
+was tested and rejected because it reloads a two-video local playlist at each
+18.5-second boundary (`shouldLoop=false`), which can create a black flash.
+
+Build the customer guide and five delivery files with:
+
+```bash
+python3 scripts/build_setup_guide.py
+./scripts/build_retail_package.sh
+```
+
+Outputs are written to the ignored `out/retail/` directory. See
+[`docs/ETSY_LAUNCH.md`](docs/ETSY_LAUNCH.md) for listing copy, tags, disclosure
+language, image prompts, and the clean-account launch gate.

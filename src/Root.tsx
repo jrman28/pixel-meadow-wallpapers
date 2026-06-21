@@ -1,18 +1,16 @@
 import "./index.css";
-import { Composition } from "remotion";
-import { MyComposition } from "./Composition";
+import {Composition, Folder} from "remotion";
+import {PixelMeadowWallpaper} from "./PixelMeadowWallpaper";
+import {FPS, LOOP_FRAMES} from "./motion";
 
-export const RemotionRoot: React.FC = () => {
-  return (
-    <>
-      <Composition
-        id="MyComp"
-        component={MyComposition}
-        durationInFrames={60}
-        fps={30}
-        width={1280}
-        height={720}
-      />
-    </>
-  );
-};
+const WIDTH = 2560;
+const HEIGHT = 1600;
+
+export const RemotionRoot: React.FC = () => (
+  <Folder name="Pixel-Meadow-Wallpapers">
+    <Composition id="PixelMeadow-Day" component={PixelMeadowWallpaper} durationInFrames={LOOP_FRAMES}
+      fps={FPS} width={WIDTH} height={HEIGHT} defaultProps={{variant: "day" as const}} />
+    <Composition id="PixelMeadow-Night" component={PixelMeadowWallpaper} durationInFrames={LOOP_FRAMES}
+      fps={FPS} width={WIDTH} height={HEIGHT} defaultProps={{variant: "night" as const}} />
+  </Folder>
+);

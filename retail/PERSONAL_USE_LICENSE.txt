@@ -1,0 +1,16 @@
+PIXEL MEADOW PERSONAL USE LICENSE
+
+Copyright (c) 2026 QuietPixelStudio. All rights reserved.
+
+Your purchase grants one individual a non-exclusive license to use the included
+wallpaper files on devices they personally own or control.
+
+You may not resell, redistribute, sublicense, upload, share, or offer the files
+as part of another product. You may not claim the artwork as your own, use it to
+train an AI model, or create competing wallpaper products from the files.
+
+Incidental appearance in personal screenshots, video calls, and non-commercial
+social posts is allowed. Contact QuietPixelStudio for commercial licensing.
+
+Aerial is a separate free, open-source project. QuietPixelStudio is not
+affiliated with or endorsed by the Aerial project.
